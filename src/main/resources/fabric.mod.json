@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "shit-to-fit",
+  "id": "stf",
   "version": "${version}",
   "name": "Shit To Fit",
   "description": "A Fabric mod",
@@ -19,6 +19,9 @@
     ],
     "client": [
       "com.neuromuser.shittofit.ShitToFitClient"
+    ],
+    "cardinal-components": [
+      "com.neuromuser.shittofit.components.ModComponents"
     ]
   },
   "mixins": [
@@ -28,10 +31,17 @@
       "environment": "client"
     }
   ],
+  "custom": {
+    "cardinal-components": [
+      "stf:player_data"
+    ]
+  },
   "depends": {
     "fabricloader": ">=0.16.0",
     "minecraft": "1.20.1",
     "java": ">=17",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "cardinal-components-base": "*",
+    "cardinal-components-entity": "*"
   }
 }

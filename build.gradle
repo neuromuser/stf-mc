@@ -11,6 +11,9 @@ base {
 }
 
 repositories {
+        repositories {
+                maven { url 'https://maven.ladysnake.org/releases' }
+        }
 }
 
 loom {
@@ -29,6 +32,8 @@ dependencies {
         mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
         modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+        modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}")
 }
 
 processResources {
