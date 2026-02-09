@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "shit-to-fit",
+  "version": "${version}",
+  "name": "Shit To Fit",
+  "description": "A Fabric mod",
+  "authors": [
+    "Neuromuser"
+  ],
+  "contact": {
+    "sources": "https://github.com/neuromuser/shit-to-fit"
+  },
+  "license": "MIT",
+  "icon": "assets/shit-to-fit/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.neuromuser.shittofit.ShitToFit"
+    ],
+    "client": [
+      "com.neuromuser.shittofit.ShitToFitClient"
+    ]
+  },
+  "mixins": [
+    "shit-to-fit.mixins.json",
+    {
+      "config": "shit-to-fit.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}
