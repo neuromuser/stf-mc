@@ -11,7 +11,7 @@
     "sources": "https://github.com/neuromuser/shit-to-fit"
   },
   "license": "MIT",
-  "icon": "assets/shit-to-fit/icon.png",
+  "icon": "assets/stf/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -42,6 +42,7 @@
     "java": ">=17",
     "fabric-api": "*",
     "cardinal-components-base": "*",
-    "cardinal-components-entity": "*"
+    "cardinal-components-entity": "*",
+    "owo": "*"
   }
 }

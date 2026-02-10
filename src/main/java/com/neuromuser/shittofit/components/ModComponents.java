@@ -20,4 +20,10 @@ public class ModComponents implements EntityComponentInitializer {
 
         registry.registerForPlayers(PLAYER_DATA, player -> new PlayerDataComponent(), RespawnCopyStrategy.ALWAYS_COPY);
     }
+
+    public static void syncPlayerData(net.minecraft.entity.player.PlayerEntity player) {
+        if (!player.getWorld().isClient) {
+            PLAYER_DATA.sync(player);
+        }
+    }
 }

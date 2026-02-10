@@ -1,7 +1,9 @@
 package com.neuromuser.shittofit;
 
+import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.neuromuser.shittofit.components.ModComponents;
 import com.neuromuser.shittofit.components.PlayerDataComponent;
+import com.neuromuser.shittofit.network.NetworkHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -15,9 +17,10 @@ public class ShitToFit implements ModInitializer {
 
         @Override
         public void onInitialize() {
+                NetworkHandler.registerServerPackets();
+
                 ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) -> {
                         ServerPlayerEntity player = handler.player;
-
                         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
 
                         if (!data.isInitialized()){
@@ -25,12 +28,14 @@ public class ShitToFit implements ModInitializer {
                         }
 
                         initializePlayerStats(player);
+                        ShitToFit.LOGGER.info("Player join - XP: {}, Level: {}, Points: {}",
+                                data.getExperiencePoints(), data.getOverallLevel(), data.getAvailableLevelPoints());
+
+                        NetworkHandler.sendPlayerDataSync(player);
+
                 }));
 
                 ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
-//                        PlayerDataComponent data = ModComponents.PLAYER_DATA.get(newPlayer);
-//                        float newMax = data.getMaxHealth() + 1.0f;
-//                        data.setMaxHealth(newMax);
                         initializePlayerStats(newPlayer);
                 });
         }
@@ -47,4 +52,5 @@ public class ShitToFit implements ModInitializer {
                 PlayerStatManager.setPlayerRangedTimeModifier(player, data.getRangedTimeModifier());
                 PlayerStatManager.setPlayerTieredzModifier(player, data.getTieredzModifier());
         }
+
 }

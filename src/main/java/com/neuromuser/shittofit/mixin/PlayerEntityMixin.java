@@ -1,5 +1,6 @@
 package com.neuromuser.shittofit.mixin;
 
+import com.neuromuser.shittofit.PlayerStatManager;
 import com.neuromuser.shittofit.components.ModComponents;
 import com.neuromuser.shittofit.components.PlayerDataComponent;
 import net.minecraft.block.BlockState;
@@ -9,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,7 +35,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         super(entityType, world);
     }
 
-    //EXHAUSTION
+
     @ModifyArgs(
             method = "addExhaustion",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/HungerManager;addExhaustion(F)V")
@@ -51,7 +53,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         }
     }
 
-    //MINING SPEED
     @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
     private void modifyMiningSpeed(BlockState block, CallbackInfoReturnable<Float> cir){
         PlayerEntity player = (PlayerEntity) (Object) this;
@@ -64,7 +65,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         }
     }
 
-    //MOVEMENT SPEED
     @Inject(method = "getMovementSpeed", at = @At("RETURN"), cancellable = true)
     private void modifyMovementSpeed(CallbackInfoReturnable<Float> cir){
         PlayerEntity player = (PlayerEntity) (Object) this;
@@ -73,7 +73,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         cir.setReturnValue(originalSpeed * data.getSpeedModifier());
     }
 
-    //BREATHING UNDERWATER
     @Inject(method = "tick", at = @At("TAIL"))
     private void fasterBreathLoss(CallbackInfo ci) {
         if (!this.getWorld().isClient && this.isSubmergedInWater) {
@@ -89,7 +88,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         }
     }
 
-    // DAMAGE
     @ModifyArg(
             method = "attack(Lnet/minecraft/entity/Entity;)V",
             at = @At(
@@ -104,7 +102,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         return damage * data.getDamageModifier();
     }
 
-    // ATTACK SPEED
     @Inject(method = "getAttackCooldownProgressPerTick", at = @At("RETURN"), cancellable = true)
     private void modifyAttackCooldown(CallbackInfoReturnable<Float> cir){
         float baseSpeed = cir.getReturnValue();

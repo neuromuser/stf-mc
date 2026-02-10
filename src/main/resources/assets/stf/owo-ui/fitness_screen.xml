@@ -1,0 +1,124 @@
+<owo-ui>
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <flow-layout direction="vertical" id="main-panel">
+                    <children>
+                        <label id="title-label">
+                            <text translatable="true">screen.stf.fitness.title</text>
+                        </label>
+
+                        <flow-layout direction="horizontal" id="top-info">
+                            <children>
+                                <flow-layout direction="vertical" id="xp-panel">
+                                    <children>
+                                        <label>
+                                            <text translatable="true">screen.stf.fitness.overall_level</text>
+                                        </label>
+                                        <label id="xp-label">
+                                            <text>XP: 0 / 100</text>
+                                        </label>
+                                    </children>
+                                    <padding>
+                                        <all>5</all>
+                                    </padding>
+                                </flow-layout>
+
+                                <flow-layout direction="vertical" id="points-panel">
+                                    <children>
+                                        <label>
+                                            <text translatable="true">screen.stf.fitness.skill_points</text>
+                                        </label>
+                                        <label id="points-label">
+                                            <text>0</text>
+                                        </label>
+                                    </children>
+                                    <padding>
+                                        <all>5</all>
+                                    </padding>
+                                </flow-layout>
+                            </children>
+                            <gap>10</gap>
+                            <padding>
+                                <all>5</all>
+                            </padding>
+                        </flow-layout>
+
+                        <flow-layout direction="horizontal" id="content-area">
+                            <children>
+                                <flow-layout direction="vertical" id="exercises-panel">
+                                    <children>
+                                        <label>
+                                            <text translatable="true">screen.stf.fitness.exercises</text>
+                                        </label>
+                                        <button id="exercise-pushups">
+                                            <text translatable="true">exercise.stf.pushups</text>
+                                        </button>
+                                        <button id="exercise-burpies">
+                                            <text translatable="true">exercise.stf.burpies</text>
+                                        </button>
+                                        <button id="exercise-squats">
+                                            <text translatable="true">exercise.stf.squats</text>
+                                        </button>
+                                        <button id="exercise-press">
+                                            <text translatable="true">exercise.stf.press</text>
+                                        </button>
+                                        <button id="exercise-dumbbells">
+                                            <text translatable="true">exercise.stf.dumbbells</text>
+                                        </button>
+                                        <button id="exercise-run_walk">
+                                            <text translatable="true">exercise.stf.run_walk</text>
+                                        </button>
+                                    </children>
+                                    <gap>3</gap>
+                                    <padding>
+                                        <all>8</all>
+                                    </padding>
+                                    <surface>
+                                        <panel dark="true"/>
+                                    </surface>
+                                </flow-layout>
+
+                                <flow-layout direction="vertical" id="stats-panel">
+                                    <children>
+                                        <label>
+                                            <text translatable="true">screen.stf.fitness.stats</text>
+                                        </label>
+                                        <flow-layout direction="vertical" id="stats-list">
+                                            <children/>
+                                            <gap>2</gap>
+                                        </flow-layout>
+                                    </children>
+                                    <gap>5</gap>
+                                    <padding>
+                                        <all>8</all>
+                                    </padding>
+                                    <surface>
+                                        <panel dark="true"/>
+                                    </surface>
+                                </flow-layout>
+                            </children>
+                            <gap>10</gap>
+                        </flow-layout>
+                    </children>
+
+                    <vertical-alignment>center</vertical-alignment>
+                    <horizontal-alignment>center</horizontal-alignment>
+                    <gap>8</gap>
+                    <padding>
+                        <all>15</all>
+                    </padding>
+                    <surface>
+                        <panel dark="true"/>
+                    </surface>
+                </flow-layout>
+            </children>
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+</owo-ui>
