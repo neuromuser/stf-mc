@@ -47,7 +47,7 @@ public class PlayerDataComponent implements Component {
     private int tieredzExp = 0;
 
     private static final int BASE_EXP_REQUIREMENT = 100;
-    private static final int MAX_STAT_LEVEL = 200;
+    private static final int MAX_STAT_LEVEL = 100;
 
     @Override
     public void readFromNbt(NbtCompound tag) {

@@ -14,6 +14,7 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +26,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
     private final Map<ExerciseManager.StatType, FlowLayout> statBars = new HashMap<>();
     private final Map<ExerciseManager.StatType, ButtonComponent> upgradeButtons = new HashMap<>();
     private final Map<ExerciseType, ButtonComponent> exerciseButtons = new HashMap<>();
+    private final Map<ExerciseType, LabelComponent> exerciseStatLabels = new HashMap<>();
 
     private LabelComponent xpLabel;
     private LabelComponent pointsLabel;
@@ -68,6 +70,8 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
         FlowLayout contentArea = Containers.horizontalFlow(Sizing.content(), Sizing.content()).gap(10);
 
+        FlowLayout leftPanel = Containers.verticalFlow(Sizing.content(), Sizing.content()).gap(10);
+
         FlowLayout exercisesPanel = Containers.verticalFlow(Sizing.content(), Sizing.content());
         exercisesPanel.surface(Surface.DARK_PANEL).padding(Insets.of(8));
         exercisesPanel.child(Components.label(Text.translatable("screen.stf.fitness.exercises")));
@@ -75,9 +79,20 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
         for (ExerciseType type : ExerciseType.values()) {
             ButtonComponent btn = Components.button(Text.translatable(type.getTranslationKey()), button -> onExercise(type));
             btn.horizontalSizing(Sizing.fixed(120));
+
+            MutableText tooltip = Text.empty();
+            for (ExerciseManager.StatType stat : ExerciseManager.StatType.values()) {
+                int gain = getExpGain(type, stat);
+                if (gain > 0) {
+                    tooltip.append(Text.translatable(getStatTranslationKey(stat))).append(Text.literal(": +" + gain + " XP\n"));
+                }
+            }
+            btn.tooltip(tooltip);
+
             exerciseButtons.put(type, btn);
             exercisesPanel.child(btn);
         }
+        leftPanel.child(exercisesPanel);
 
         FlowLayout statsPanel = Containers.verticalFlow(Sizing.content(), Sizing.content());
         statsPanel.surface(Surface.DARK_PANEL).padding(Insets.of(8));
@@ -90,6 +105,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
             LabelComponent nameLabel = Components.label(Text.translatable(getStatTranslationKey(stat)));
             nameLabel.horizontalSizing(Sizing.fixed(90));
+            nameLabel.tooltip(Text.translatable("stat.stf.description." + stat.name().toLowerCase()));
 
             LabelComponent valueLabel = Components.label(Text.empty());
             valueLabel.horizontalSizing(Sizing.fixed(40));
@@ -100,6 +116,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
             ButtonComponent upgradeBtn = Components.button(Text.literal("+"), btn -> onUpgrade(stat));
             upgradeBtn.sizing(Sizing.fixed(20), Sizing.fixed(18));
+            upgradeBtn.tooltip(Text.translatable("screen.stf.fitness.upgrade_tooltip"));
             upgradeButtons.put(stat, upgradeBtn);
 
             statRow.child(nameLabel).child(valueLabel).child(progressBar).child(upgradeBtn);
@@ -107,7 +124,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
         }
 
         statsPanel.child(statsList);
-        contentArea.child(exercisesPanel).child(statsPanel);
+        contentArea.child(leftPanel).child(statsPanel);
         mainPanel.child(contentArea);
         rootComponent.child(mainPanel);
 
@@ -122,6 +139,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
         currentHoveredType = null;
         currentHoveredUpgrade = null;
+
 
         for (Map.Entry<ExerciseType, ButtonComponent> entry : exerciseButtons.entrySet()) {
             if (entry.getValue().isHovered()) {
@@ -141,6 +159,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
             updateUI();
         }
     }
+
     private FlowLayout createProgressBar(ExerciseManager.StatType stat) {
         FlowLayout bar = Containers.horizontalFlow(Sizing.fixed(80), Sizing.fixed(8));
 
@@ -168,7 +187,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
                 int previewWidth = (int) (((float) expGain / max) * component.width());
 
                 float alpha = (float) ((Math.sin(System.currentTimeMillis() / 150.0) + 1.0) / 2.0);
-                int color = ((int) (alpha * 100 + 80) << 24) | 0x00FF00; 
+                int color = ((int) (alpha * 100 + 80) << 24) | 0x00FF00;
 
                 int startX = component.x() + currentWidth;
                 int endX = Math.min(startX + previewWidth, component.x() + component.width());
@@ -183,6 +202,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
         return bar;
     }
+
     public void updateUI() {
         assert client != null;
         if (client.player == null) return;
@@ -203,11 +223,14 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
             statLabels.get(stat).text(Text.literal("Lv " + level));
 
+            statBars.get(stat).tooltip(Text.literal((int)(progress * max) + " / " + max + " XP"));
+
             FlowLayout bar = statBars.get(stat);
             ((FlowLayout) bar.children().get(0)).horizontalSizing(Sizing.fill((int)(progress * 100)));
 
             upgradeButtons.get(stat).active(data.getAvailableLevelPoints() > 0 && !data.isStatAtMaxLevel(stat));
         }
+
     }
 
     private int getExpGain(ExerciseType exercise, ExerciseManager.StatType stat) {
@@ -217,7 +240,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
             case SQUATS -> switch (stat) { case MAX_HEALTH -> 15; case SPEED -> 10; case CRAFTING_TIME -> 20; default -> 0; };
             case PRESS -> switch (stat) { case MAX_HEALTH -> 5; case DAMAGE, EXHAUSTION -> 15; default -> 0; };
             case DUMBBELLS -> switch (stat) { case ATTACK_SPEED, MINING_SPEED -> 15; case CRAFTING_TIME -> 10; default -> 0; };
-            case RUN_WALK -> switch (stat) { case SPEED -> 200; case BREATH -> 60; case TIEREDZ -> 40; default -> 0; };
+            case RUN_WALK -> switch (stat) { case SPEED -> 100; case BREATH -> 60; case TIEREDZ -> 40; default -> 0; };
         };
     }
 

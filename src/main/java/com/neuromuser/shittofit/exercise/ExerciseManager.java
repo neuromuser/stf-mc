@@ -38,7 +38,7 @@ public class ExerciseManager {
                 data.addStatExperience(StatType.CRAFTING_TIME, 10);
             }
             case RUN_WALK -> {
-                data.addStatExperience(StatType.SPEED, 200);
+                data.addStatExperience(StatType.SPEED, 100);
                 data.addStatExperience(StatType.BREATH, 60);
                 data.addStatExperience(StatType.TIEREDZ, 40);
                 data.addExperiencePoints(90);

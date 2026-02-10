@@ -1,0 +1,38 @@
+{
+  "screen.stf.fitness.title": "Shit to Fit",
+  "screen.stf.fitness.overall_level": "Загальний рівень",
+  "screen.stf.fitness.skill_points": "Туалетні жетони",
+  "screen.stf.fitness.exercises": "Вправи",
+  "screen.stf.fitness.stats": "Характеристики",
+  "screen.stf.fitness.upgrade_tooltip": "+100 досвіду до характеристики",
+  "screen.stf.fitness.statistics": "Статистика",
+
+  "stat.stf.damage": "Бойова міць",
+  "stat.stf.attack_speed": "Фехтування",
+  "stat.stf.tieredz": "Майстерність",
+  "stat.stf.exhaustion": "Витривалість",
+  "stat.stf.mining_speed": "Видобуток",
+  "stat.stf.ranged_time": "Стрільба",
+  "stat.stf.max_health": "Гартування",
+  "stat.stf.speed": "Атлетика",
+  "stat.stf.crafting_time": "Вправність",
+  "stat.stf.breath": "Дихання",
+
+  "stat.stf.description.damage": "Збільшує вашу силу атаки ближньою зброєю.",
+  "stat.stf.description.attack_speed": "Дозволяє швидше наносити удари ближньою зброєю.",
+  "stat.stf.description.tieredz": "Збільшує шанс отримати гарний модифікатор при крафті/перековці інструменту.",
+  "stat.stf.description.exhaustion": "Зменшує витрати голоду при діях.",
+  "stat.stf.description.mining_speed": "Збільшує швидкість руйнування блоків.",
+  "stat.stf.description.ranged_time": "Зменшує час натягування тятиви лука.",
+  "stat.stf.description.max_health": "Збільшує максимальне здоров'я.",
+  "stat.stf.description.speed": "Пришвидшує біг та ходьбу.",
+  "stat.stf.description.crafting_time": "Зменшує час, необхідний для створення речей.",
+  "stat.stf.description.breath": "Збільшує час перебування під водою.",
+
+  "exercise.stf.pushups": "Віджимання x20",
+  "exercise.stf.burpies": "Бурпі x7",
+  "exercise.stf.squats": "Присідання x20",
+  "exercise.stf.press": "Прес x40",
+  "exercise.stf.dumbbells": "Гантелі x30",
+  "exercise.stf.run_walk": "Ходьба/Біг 1 км"
+}
