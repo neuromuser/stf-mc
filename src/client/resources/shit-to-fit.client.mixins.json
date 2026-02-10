@@ -2,7 +2,9 @@
   "required": true,
   "package": "com.neuromuser.shittofit.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [],
+  "mixins": [
+    "CraftManagerMixin"
+  ],
   "client": [],
   "injectors": {
     "defaultRequire": 1

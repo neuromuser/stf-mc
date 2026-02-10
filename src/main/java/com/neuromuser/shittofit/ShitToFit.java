@@ -22,17 +22,29 @@ public class ShitToFit implements ModInitializer {
 
                         if (!data.isInitialized()){
                                 data.setInitialized(true);
-                                data.setMaxHealth(0.5f);
-                                PlayerStatManager.setPlayerHealth(player, 0.5f);
                         }
-                        else PlayerStatManager.setPlayerHealth(player, data.getMaxHealth());
+
+                        initializePlayerStats(player);
                 }));
 
                 ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
-                        PlayerDataComponent data = ModComponents.PLAYER_DATA.get(newPlayer);
-                        float newMax = data.getMaxHealth() + 1.0f;
-                        data.setMaxHealth(newMax);
-                        PlayerStatManager.setPlayerHealth(newPlayer, data.getMaxHealth());
+//                        PlayerDataComponent data = ModComponents.PLAYER_DATA.get(newPlayer);
+//                        float newMax = data.getMaxHealth() + 1.0f;
+//                        data.setMaxHealth(newMax);
+                        initializePlayerStats(newPlayer);
                 });
+        }
+
+        public void initializePlayerStats(ServerPlayerEntity player){
+                PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
+                PlayerStatManager.setPlayerMaxHealth(player, data.getMaxHealth());
+                PlayerStatManager.setPlayerExhaustionModifier(player, data.getExhaustionModifier());
+                PlayerStatManager.setPlayerMiningSpeedModifier(player, data.getMiningSpeedModifier());
+                PlayerStatManager.setPlayerCraftingTimeModifier(player, data.getCraftingTimeModifier());
+                PlayerStatManager.setPlayerSpeedModifier(player, data.getSpeedModifier());
+                PlayerStatManager.setPlayerDamageModifier(player, data.getDamageModifier());
+                PlayerStatManager.setPlayerAttackSpeedModifier(player, data.getAttackSpeedModifier());
+                PlayerStatManager.setPlayerRangedTimeModifier(player, data.getRangedTimeModifier());
+                PlayerStatManager.setPlayerTieredzModifier(player, data.getTieredzModifier());
         }
 }

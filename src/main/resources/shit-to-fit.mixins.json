@@ -2,7 +2,11 @@
   "required": true,
   "package": "com.neuromuser.shittofit.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [],
+  "mixins": [
+    "LivingEntityAccessor",
+    "PlayerEntityMixin",
+    "TieredRarityMixin"
+  ],
   "client": [],
   "injectors": {
     "defaultRequire": 1
