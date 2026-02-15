@@ -3,7 +3,8 @@
   "package": "com.neuromuser.shittofit.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "CraftManagerMixin"
+    "CraftManagerMixin",
+    "MixinCraftingTickableSound"
   ],
   "client": [],
   "injectors": {

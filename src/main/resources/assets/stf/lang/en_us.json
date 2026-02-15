@@ -29,10 +29,12 @@
   "stat.stf.description.crafting_time": "Reduces the time required to craft items.",
   "stat.stf.description.breath": "Increases the time you can stay underwater.",
 
+  "exercise.stf.pullups": "Pull-ups x10",
   "exercise.stf.pushups": "Push-ups x20",
   "exercise.stf.burpies": "Burpees x7",
   "exercise.stf.squats": "Squats x20",
   "exercise.stf.press": "Abs x40",
   "exercise.stf.dumbbells": "Dumbbells x30",
+  "exercise.stf.plank": "Plank 1min",
   "exercise.stf.run_walk": "Walk/Run 1 km"
 }

@@ -12,6 +12,11 @@ public class ExerciseManager {
     public static void completeExercise(ServerPlayerEntity player, ExerciseType type) {
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
         switch (type) {
+            case PULLUPS -> {
+                data.addStatExperience(StatType.DAMAGE, 20);
+                data.addStatExperience(StatType.MINING_SPEED, 15);
+                data.addStatExperience(StatType.TIEREDZ, 10);
+            }
             case PUSHUPS -> {
                 data.addStatExperience(StatType.DAMAGE, 15);
                 data.addStatExperience(StatType.ATTACK_SPEED, 10);
@@ -20,7 +25,7 @@ public class ExerciseManager {
             case BURPIES -> {
                 data.addStatExperience(StatType.EXHAUSTION, 15);
                 data.addStatExperience(StatType.MINING_SPEED, 20);
-                data.addStatExperience(StatType.RANGED_TIME, 20);
+                data.addStatExperience(StatType.RANGED_TIME, 40);
             }
             case SQUATS -> {
                 data.addStatExperience(StatType.MAX_HEALTH, 15);
@@ -36,6 +41,10 @@ public class ExerciseManager {
                 data.addStatExperience(StatType.ATTACK_SPEED, 15);
                 data.addStatExperience(StatType.MINING_SPEED, 15);
                 data.addStatExperience(StatType.CRAFTING_TIME, 10);
+            }
+            case PLANK -> {
+                data.addStatExperience(StatType.EXHAUSTION, 40);
+                data.addStatExperience(StatType.BREATH, 40);
             }
             case RUN_WALK -> {
                 data.addStatExperience(StatType.SPEED, 100);

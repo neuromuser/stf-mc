@@ -16,19 +16,18 @@ public class PlayerStatManager {
         if (attribute != null){
             UUID modifierUuid = ModConstants.MAX_HEALTH_MODIFIER_UUID;
             attribute.removeModifier(modifierUuid);
-            float actualMaxHealth = maxHealthMultiplier;
 
             EntityAttributeModifier modifier = new EntityAttributeModifier(
                     modifierUuid,
                     (ShitToFit.MOD_ID + ":max_health"),
-                    actualMaxHealth - 20.0,
+                    maxHealthMultiplier - 20.0,
                     EntityAttributeModifier.Operation.ADDITION
             );
 
             attribute.addPersistentModifier(modifier);
 
-            if (player.getHealth() > actualMaxHealth) {
-                player.setHealth(actualMaxHealth);
+            if (player.getHealth() > maxHealthMultiplier) {
+                player.setHealth(maxHealthMultiplier);
             }
         }
     }

@@ -30,9 +30,11 @@
   "stat.stf.description.breath": "Збільшує час перебування під водою.",
 
   "exercise.stf.pushups": "Віджимання x20",
+  "exercise.stf.pullups": "Підтягування x10",
   "exercise.stf.burpies": "Бурпі x7",
   "exercise.stf.squats": "Присідання x20",
   "exercise.stf.press": "Прес x40",
   "exercise.stf.dumbbells": "Гантелі x30",
+  "exercise.stf.plank": "Планка 1хв",
   "exercise.stf.run_walk": "Ходьба/Біг 1 км"
 }

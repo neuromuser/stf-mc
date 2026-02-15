@@ -1,16 +1,17 @@
 package com.neuromuser.shittofit.mixin;
 
-import com.neuromuser.shittofit.PlayerStatManager;
 import com.neuromuser.shittofit.components.ModComponents;
 import com.neuromuser.shittofit.components.PlayerDataComponent;
 import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,7 +21,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
-@Mixin(PlayerEntity.class)
+import java.util.Objects;
+
+@Mixin(value = PlayerEntity.class, priority = 10000)
 public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Shadow
@@ -52,13 +55,39 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             args.set(0, originalExhaustion * modifier);
         }
     }
-
-    @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
-    private void modifyMiningSpeed(BlockState block, CallbackInfoReturnable<Float> cir){
+    @Inject(method = "getBlockBreakingSpeed", at = @At("HEAD"), cancellable = true)
+    private void modifyMiningSpeed(BlockState block, CallbackInfoReturnable<Float> cir) {
         PlayerEntity player = (PlayerEntity) (Object) this;
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
-        float originalSpeed = cir.getReturnValue();
-        cir.setReturnValue(originalSpeed * data.getMiningSpeedModifier());
+
+        float baseSpeed = player.getInventory().getBlockBreakingSpeed(block);
+
+        if (this.hasStatusEffect(StatusEffects.HASTE)) {
+            baseSpeed *= 1.0F + (float)(Objects.requireNonNull(this.getStatusEffect(StatusEffects.HASTE)).getAmplifier() + 1) * 0.2F;
+        }
+
+        if (this.hasStatusEffect(StatusEffects.MINING_FATIGUE)) {
+            float fatigue;
+            switch (Objects.requireNonNull(this.getStatusEffect(StatusEffects.MINING_FATIGUE)).getAmplifier()) {
+                case 0 -> fatigue = 0.3F;
+                case 1 -> fatigue = 0.09F;
+                case 2 -> fatigue = 0.027F;
+                default -> fatigue = 8.1E-4F;
+            }
+            baseSpeed *= fatigue;
+        }
+
+        ItemStack heldItem = player.getMainHandStack();
+        if (!heldItem.isEmpty()) {
+            int efficiencyLevel = EnchantmentHelper.getLevel(Enchantments.EFFICIENCY, heldItem);
+            if (efficiencyLevel > 0 && heldItem.isSuitableFor(block)) {
+                baseSpeed += (float)(efficiencyLevel * efficiencyLevel + 1);
+            }
+        }
+
+        float finalSpeed = baseSpeed * data.getMiningSpeedModifier();
+
+        cir.setReturnValue(finalSpeed);
 
         if (!player.getWorld().isClient) {
             player.addExhaustion(0.002F * data.getExhaustionModifier());

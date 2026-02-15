@@ -235,11 +235,13 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
     private int getExpGain(ExerciseType exercise, ExerciseManager.StatType stat) {
         return switch (exercise) {
+            case PULLUPS -> switch (stat) { case DAMAGE -> 20; case MINING_SPEED -> 15; case TIEREDZ -> 10; default -> 0; };
             case PUSHUPS -> switch (stat) { case DAMAGE -> 15; case ATTACK_SPEED, TIEREDZ -> 10; default -> 0; };
             case BURPIES -> switch (stat) { case EXHAUSTION -> 15; case MINING_SPEED, RANGED_TIME -> 20; default -> 0; };
             case SQUATS -> switch (stat) { case MAX_HEALTH -> 15; case SPEED -> 10; case CRAFTING_TIME -> 20; default -> 0; };
             case PRESS -> switch (stat) { case MAX_HEALTH -> 5; case DAMAGE, EXHAUSTION -> 15; default -> 0; };
             case DUMBBELLS -> switch (stat) { case ATTACK_SPEED, MINING_SPEED -> 15; case CRAFTING_TIME -> 10; default -> 0; };
+            case PLANK -> switch (stat) { case EXHAUSTION -> 40; case BREATH -> 40; default -> 0; };
             case RUN_WALK -> switch (stat) { case SPEED -> 100; case BREATH -> 60; case TIEREDZ -> 40; default -> 0; };
         };
     }

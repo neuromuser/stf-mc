@@ -1,6 +1,5 @@
 package com.neuromuser.shittofit;
 
-import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.neuromuser.shittofit.components.ModComponents;
 import com.neuromuser.shittofit.components.PlayerDataComponent;
 import com.neuromuser.shittofit.network.NetworkHandler;
@@ -37,6 +36,8 @@ public class ShitToFit implements ModInitializer {
 
                 ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
                         initializePlayerStats(newPlayer);
+
+                        NetworkHandler.sendPlayerDataSync(newPlayer);
                 });
         }
 
