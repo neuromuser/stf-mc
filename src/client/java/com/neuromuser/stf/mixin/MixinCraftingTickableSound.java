@@ -1,4 +1,4 @@
-package com.neuromuser.shittofit.mixin;
+package com.neuromuser.stf.mixin;
 
 import net.minecraft.client.sound.MovingSoundInstance;
 import net.minecraft.sound.SoundCategory;
@@ -21,14 +21,14 @@ public abstract class MixinCraftingTickableSound extends MovingSoundInstance {
         super(sound, category, random);
     }
 
-    @Inject(method = "<init>", at = @At("TAIL"))
+    @Inject(method = "<init>", at = @At("TAIL"), require = 0)
     private void onInit(BlockPos pos, CallbackInfo ci) {
         this.repeatDelay = 10;
 
         this.randomizePitch();
     }
 
-    @Inject(method = "tick", at = @At("HEAD"))
+    @Inject(method = "tick", at = @At("HEAD"), require = 0)
     private void onTick(CallbackInfo ci) {
         this.ticksExisted++;
 
