@@ -15,13 +15,16 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.neuromuser.shittofit.ShitToFit"
+      "com.neuromuser.stf.SweatToFitMod"
     ],
     "client": [
-      "com.neuromuser.shittofit.ShitToFitClient"
+      "com.neuromuser.stf.SweatToFitClientMod"
     ],
     "cardinal-components": [
-      "com.neuromuser.shittofit.components.ModComponents"
+      "com.neuromuser.stf.components.ModComponents"
+    ],
+    "modmenu": [
+      "com.neuromuser.stf.compat.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -43,6 +46,7 @@
     "fabric-api": "*",
     "cardinal-components-base": "*",
     "cardinal-components-entity": "*",
-    "owo": "*"
+    "owo": "*",
+    "cloth-config": "*"
   }
 }

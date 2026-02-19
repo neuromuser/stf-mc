@@ -1,7 +1,7 @@
-package com.neuromuser.shittofit.mixin;
+package com.neuromuser.stf.mixin;
 
-import com.neuromuser.shittofit.components.ModComponents;
-import com.neuromuser.shittofit.components.PlayerDataComponent;
+import com.neuromuser.stf.components.ModComponents;
+import com.neuromuser.stf.components.PlayerDataComponent;
 import draylar.tiered.api.ModifierUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

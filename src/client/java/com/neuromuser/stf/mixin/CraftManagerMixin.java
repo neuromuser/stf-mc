@@ -1,5 +1,5 @@
-package com.neuromuser.shittofit.mixin;
-import com.neuromuser.shittofit.components.ModComponents;
+package com.neuromuser.stf.mixin;
+import com.neuromuser.stf.components.ModComponents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;

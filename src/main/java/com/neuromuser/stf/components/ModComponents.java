@@ -1,6 +1,6 @@
-package com.neuromuser.shittofit.components;
+package com.neuromuser.stf.components;
 
-import com.neuromuser.shittofit.ShitToFit;
+import com.neuromuser.stf.SweatToFitMod;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
@@ -14,7 +14,7 @@ public class ModComponents implements EntityComponentInitializer {
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
         PLAYER_DATA = ComponentRegistry.getOrCreate(
-                new Identifier(ShitToFit.MOD_ID, "player_data"),
+                new Identifier(SweatToFitMod.MOD_ID, "player_data"),
                 PlayerDataComponent.class
         );
 

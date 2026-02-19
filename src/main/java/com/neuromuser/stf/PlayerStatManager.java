@@ -1,7 +1,7 @@
-package com.neuromuser.shittofit;
+package com.neuromuser.stf;
 
-import com.neuromuser.shittofit.components.ModComponents;
-import com.neuromuser.shittofit.components.PlayerDataComponent;
+import com.neuromuser.stf.components.ModComponents;
+import com.neuromuser.stf.components.PlayerDataComponent;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -19,7 +19,7 @@ public class PlayerStatManager {
 
             EntityAttributeModifier modifier = new EntityAttributeModifier(
                     modifierUuid,
-                    (ShitToFit.MOD_ID + ":max_health"),
+                    (SweatToFitMod.MOD_ID + ":max_health"),
                     maxHealthMultiplier - 20.0,
                     EntityAttributeModifier.Operation.ADDITION
             );

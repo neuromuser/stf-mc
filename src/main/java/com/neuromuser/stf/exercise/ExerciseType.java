@@ -1,4 +1,4 @@
-package com.neuromuser.shittofit.exercise;
+package com.neuromuser.stf.exercise;
 
 public enum ExerciseType {
     PULLUPS("exercise.stf.pullups"),

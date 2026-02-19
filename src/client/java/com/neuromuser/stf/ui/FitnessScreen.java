@@ -1,10 +1,10 @@
-package com.neuromuser.shittofit.ui;
+package com.neuromuser.stf.ui;
 
-import com.neuromuser.shittofit.components.ModComponents;
-import com.neuromuser.shittofit.components.PlayerDataComponent;
-import com.neuromuser.shittofit.exercise.ExerciseManager;
-import com.neuromuser.shittofit.exercise.ExerciseType;
-import com.neuromuser.shittofit.network.ClientNetworkHelper;
+import com.neuromuser.stf.components.ModComponents;
+import com.neuromuser.stf.components.PlayerDataComponent;
+import com.neuromuser.stf.config.ModConfig;
+import com.neuromuser.stf.exercise.ExerciseManager;
+import com.neuromuser.stf.network.ClientNetworkHelper;
 import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
@@ -12,6 +12,7 @@ import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
@@ -25,12 +26,11 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
     private final Map<ExerciseManager.StatType, LabelComponent> statLabels = new HashMap<>();
     private final Map<ExerciseManager.StatType, FlowLayout> statBars = new HashMap<>();
     private final Map<ExerciseManager.StatType, ButtonComponent> upgradeButtons = new HashMap<>();
-    private final Map<ExerciseType, ButtonComponent> exerciseButtons = new HashMap<>();
-    private final Map<ExerciseType, LabelComponent> exerciseStatLabels = new HashMap<>();
+    private final Map<Integer, ButtonComponent> exerciseButtons = new HashMap<>();
 
     private LabelComponent xpLabel;
     private LabelComponent pointsLabel;
-    private ExerciseType currentHoveredType = null;
+    private Integer currentHoveredIndex = null;
     private ExerciseManager.StatType currentHoveredUpgrade = null;
 
     @Override
@@ -44,6 +44,8 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
                 .surface(Surface.VANILLA_TRANSLUCENT)
                 .horizontalAlignment(HorizontalAlignment.CENTER)
                 .verticalAlignment(VerticalAlignment.CENTER);
+
+        ModConfig config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
 
         FlowLayout mainPanel = Containers.verticalFlow(Sizing.content(), Sizing.content());
         mainPanel.surface(Surface.DARK_PANEL).padding(Insets.of(15));
@@ -76,20 +78,26 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
         exercisesPanel.surface(Surface.DARK_PANEL).padding(Insets.of(8));
         exercisesPanel.child(Components.label(Text.translatable("screen.stf.fitness.exercises")));
 
-        for (ExerciseType type : ExerciseType.values()) {
-            ButtonComponent btn = Components.button(Text.translatable(type.getTranslationKey()), button -> onExercise(type));
+
+        for (int i = 0; i < ModConfig.MAX_EXERCISES; i++) {
+            ModConfig.ExerciseConfig exerciseConfig = config.getExercise(i);
+            if (exerciseConfig == null || !exerciseConfig.enabled) continue;
+
+            final int index = i;
+            ButtonComponent btn = Components.button(Text.translatable(exerciseConfig.name), button -> onExercise(index));
             btn.horizontalSizing(Sizing.fixed(120));
 
             MutableText tooltip = Text.empty();
             for (ExerciseManager.StatType stat : ExerciseManager.StatType.values()) {
-                int gain = getExpGain(type, stat);
+                int gain = exerciseConfig.getExpForStat(stat);
                 if (gain > 0) {
-                    tooltip.append(Text.translatable(getStatTranslationKey(stat))).append(Text.literal(": +" + gain + " XP\n"));
+                    int actual = Math.round(gain * config.globalExpMultiplier);
+                    tooltip.append(Text.translatable(getStatTranslationKey(stat))).append(Text.literal(": +" + actual + " XP\n"));
                 }
             }
             btn.tooltip(tooltip);
 
-            exerciseButtons.put(type, btn);
+            exerciseButtons.put(i, btn);
             exercisesPanel.child(btn);
         }
         leftPanel.child(exercisesPanel);
@@ -134,16 +142,15 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
     @Override
     public void tick() {
         super.tick();
-        ExerciseType lastExerciseHover = currentHoveredType;
+        Integer lastExerciseHover = currentHoveredIndex;
         ExerciseManager.StatType lastUpgradeHover = currentHoveredUpgrade;
 
-        currentHoveredType = null;
+        currentHoveredIndex = null;
         currentHoveredUpgrade = null;
 
-
-        for (Map.Entry<ExerciseType, ButtonComponent> entry : exerciseButtons.entrySet()) {
+        for (Map.Entry<Integer, ButtonComponent> entry : exerciseButtons.entrySet()) {
             if (entry.getValue().isHovered()) {
-                currentHoveredType = entry.getKey();
+                currentHoveredIndex = entry.getKey();
                 break;
             }
         }
@@ -155,7 +162,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
             }
         }
 
-        if (lastExerciseHover != currentHoveredType || lastUpgradeHover != currentHoveredUpgrade) {
+        if (lastExerciseHover != currentHoveredIndex || lastUpgradeHover != currentHoveredUpgrade) {
             updateUI();
         }
     }
@@ -174,9 +181,12 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
             if (currentHoveredUpgrade == stat && data.getAvailableLevelPoints() > 0 && !data.isStatAtMaxLevel(stat)) {
                 expGain = 100;
-            }
-            else if (currentHoveredType != null) {
-                expGain = getExpGain(currentHoveredType, stat);
+            } else if (currentHoveredIndex != null) {
+                ModConfig config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
+                ModConfig.ExerciseConfig exerciseConfig = config.getExercise(currentHoveredIndex);
+                if (exerciseConfig != null) {
+                    expGain = Math.round(exerciseConfig.getExpForStat(stat) * config.globalExpMultiplier);
+                }
             }
 
             if (expGain > 0) {
@@ -230,26 +240,12 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
             upgradeButtons.get(stat).active(data.getAvailableLevelPoints() > 0 && !data.isStatAtMaxLevel(stat));
         }
-
     }
 
-    private int getExpGain(ExerciseType exercise, ExerciseManager.StatType stat) {
-        return switch (exercise) {
-            case PULLUPS -> switch (stat) { case DAMAGE -> 20; case MINING_SPEED -> 15; case TIEREDZ -> 10; default -> 0; };
-            case PUSHUPS -> switch (stat) { case DAMAGE -> 15; case ATTACK_SPEED, TIEREDZ -> 10; default -> 0; };
-            case BURPIES -> switch (stat) { case EXHAUSTION -> 15; case MINING_SPEED, RANGED_TIME -> 20; default -> 0; };
-            case SQUATS -> switch (stat) { case MAX_HEALTH -> 15; case SPEED -> 10; case CRAFTING_TIME -> 20; default -> 0; };
-            case PRESS -> switch (stat) { case MAX_HEALTH -> 5; case DAMAGE, EXHAUSTION -> 15; default -> 0; };
-            case DUMBBELLS -> switch (stat) { case ATTACK_SPEED, MINING_SPEED -> 15; case CRAFTING_TIME -> 10; default -> 0; };
-            case PLANK -> switch (stat) { case EXHAUSTION -> 40; case BREATH -> 40; default -> 0; };
-            case RUN_WALK -> switch (stat) { case SPEED -> 100; case BREATH -> 60; case TIEREDZ -> 40; default -> 0; };
-        };
-    }
-
-    private void onExercise(ExerciseType type) {
+    private void onExercise(int exerciseIndex) {
         assert client != null;
         client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0f));
-        ClientNetworkHelper.sendCompleteExercise(type);
+        ClientNetworkHelper.sendCompleteExercise(exerciseIndex);
     }
 
     private void onUpgrade(ExerciseManager.StatType stat) {

@@ -1,7 +1,7 @@
-package com.neuromuser.shittofit.mixin;
+package com.neuromuser.stf.mixin;
 
-import com.neuromuser.shittofit.components.ModComponents;
-import com.neuromuser.shittofit.components.PlayerDataComponent;
+import com.neuromuser.stf.components.ModComponents;
+import com.neuromuser.stf.components.PlayerDataComponent;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;

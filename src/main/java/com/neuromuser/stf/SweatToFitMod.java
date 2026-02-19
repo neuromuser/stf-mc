@@ -1,8 +1,8 @@
-package com.neuromuser.shittofit;
+package com.neuromuser.stf;
 
-import com.neuromuser.shittofit.components.ModComponents;
-import com.neuromuser.shittofit.components.PlayerDataComponent;
-import com.neuromuser.shittofit.network.NetworkHandler;
+import com.neuromuser.stf.components.ModComponents;
+import com.neuromuser.stf.components.PlayerDataComponent;
+import com.neuromuser.stf.network.NetworkHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -10,7 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ShitToFit implements ModInitializer {
+public class SweatToFitMod implements ModInitializer {
         public static final String MOD_ID = "stf";
         public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
@@ -27,7 +27,7 @@ public class ShitToFit implements ModInitializer {
                         }
 
                         initializePlayerStats(player);
-                        ShitToFit.LOGGER.info("Player join - XP: {}, Level: {}, Points: {}",
+                        SweatToFitMod.LOGGER.info("Player join - XP: {}, Level: {}, Points: {}",
                                 data.getExperiencePoints(), data.getOverallLevel(), data.getAvailableLevelPoints());
 
                         NetworkHandler.sendPlayerDataSync(player);

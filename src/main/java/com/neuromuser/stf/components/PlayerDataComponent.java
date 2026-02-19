@@ -1,6 +1,6 @@
-package com.neuromuser.shittofit.components;
+package com.neuromuser.stf.components;
 
-import com.neuromuser.shittofit.exercise.ExerciseManager;
+import com.neuromuser.stf.exercise.ExerciseManager;
 import dev.onyxstudios.cca.api.v3.component.Component;
 import net.minecraft.nbt.NbtCompound;
 

@@ -1,14 +1,17 @@
-package com.neuromuser.shittofit.network;
+package com.neuromuser.stf.network;
 
-import com.neuromuser.shittofit.components.ModComponents;
-import com.neuromuser.shittofit.components.PlayerDataComponent;
-import com.neuromuser.shittofit.exercise.ExerciseManager;
-import com.neuromuser.shittofit.exercise.ExerciseType;
-import com.neuromuser.shittofit.ui.FitnessScreen;
+import com.neuromuser.stf.components.ModComponents;
+import com.neuromuser.stf.components.PlayerDataComponent;
+import com.neuromuser.stf.config.ModConfig;
+import com.neuromuser.stf.exercise.ExerciseManager;
+import com.neuromuser.stf.ui.FitnessScreen;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
+
+import java.util.Map;
 
 public class ClientNetworkHelper {
 
@@ -78,9 +81,25 @@ public class ClientNetworkHelper {
         }
     }
 
-    public static void sendCompleteExercise(ExerciseType type) {
+    public static void sendCompleteExercise(int exerciseIndex) {
+        ModConfig config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
+        ModConfig.ExerciseConfig exerciseConfig = config.getExercise(exerciseIndex);
+        if (exerciseConfig == null || !exerciseConfig.enabled) return;
+
+        float multiplier = config.globalExpMultiplier;
+        Map<ExerciseManager.StatType, Integer> expMap = exerciseConfig.getExpMap();
+
         PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeInt(type.ordinal());
+
+        int baseXp = Math.round((10 + exerciseConfig.bonusBaseExp) * multiplier);
+        buf.writeInt(baseXp);
+        buf.writeInt(expMap.size());
+
+        for (Map.Entry<ExerciseManager.StatType, Integer> entry : expMap.entrySet()) {
+            buf.writeInt(entry.getKey().ordinal());
+            buf.writeInt(Math.round(entry.getValue() * multiplier));
+        }
+
         ClientPlayNetworking.send(NetworkHandler.COMPLETE_EXERCISE, buf);
     }
 

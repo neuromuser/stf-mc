@@ -1,30 +1,45 @@
-package com.neuromuser.shittofit.network;
+package com.neuromuser.stf.network;
 
-import com.neuromuser.shittofit.ShitToFit;
-import com.neuromuser.shittofit.components.ModComponents;
-import com.neuromuser.shittofit.components.PlayerDataComponent;
-import com.neuromuser.shittofit.exercise.ExerciseManager;
-import com.neuromuser.shittofit.exercise.ExerciseType;
+import com.neuromuser.stf.SweatToFitMod;
+import com.neuromuser.stf.components.ModComponents;
+import com.neuromuser.stf.components.PlayerDataComponent;
+import com.neuromuser.stf.exercise.ExerciseManager;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 public class NetworkHandler {
-    public static final Identifier COMPLETE_EXERCISE = new Identifier(ShitToFit.MOD_ID, "complete_exercise");
-    public static final Identifier UPGRADE_STAT = new Identifier(ShitToFit.MOD_ID, "upgrade_stat");
-    public static final Identifier SYNC_PLAYER_DATA = new Identifier(ShitToFit.MOD_ID, "sync_player_data");
+    public static final Identifier COMPLETE_EXERCISE = new Identifier(SweatToFitMod.MOD_ID, "complete_exercise");
+    public static final Identifier UPGRADE_STAT = new Identifier(SweatToFitMod.MOD_ID, "upgrade_stat");
+    public static final Identifier SYNC_PLAYER_DATA = new Identifier(SweatToFitMod.MOD_ID, "sync_player_data");
 
     public static void registerServerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(COMPLETE_EXERCISE, (server, player, handler, buf, responseSender) -> {
-            int exerciseId = buf.readInt();
-            server.execute(() -> {
-                if (exerciseId >= 0 && exerciseId < ExerciseType.values().length) {
-                    ExerciseType type = ExerciseType.values()[exerciseId];
-                    ExerciseManager.completeExercise(player, type);
-                    sendPlayerDataSync(player);
+            int baseXp = buf.readInt();
+            int count = buf.readInt();
+
+            Map<ExerciseManager.StatType, Integer> expMap = new EnumMap<>(ExerciseManager.StatType.class);
+            ExerciseManager.StatType[] statTypes = ExerciseManager.StatType.values();
+
+            for (int i = 0; i < count; i++) {
+                int statId = buf.readInt();
+                int expAmount = buf.readInt();
+                if (statId >= 0 && statId < statTypes.length && expAmount > 0) {
+                    expMap.put(statTypes[statId], Math.min(expAmount, 2000));
                 }
+            }
+
+            int safeBaseXp = Math.min(Math.max(baseXp, 0), 10000);
+            Map<ExerciseManager.StatType, Integer> safeExpMap = expMap;
+
+            server.execute(() -> {
+                ExerciseManager.completeExercise(player, safeBaseXp, safeExpMap);
+                sendPlayerDataSync(player);
             });
         });
 

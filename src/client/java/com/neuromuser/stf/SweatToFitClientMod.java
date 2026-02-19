@@ -1,7 +1,10 @@
-package com.neuromuser.shittofit;
+package com.neuromuser.stf;
 
-import com.neuromuser.shittofit.network.ClientNetworkHelper;
-import com.neuromuser.shittofit.ui.FitnessScreen;
+import com.neuromuser.stf.config.ModConfig;
+import com.neuromuser.stf.network.ClientNetworkHelper;
+import com.neuromuser.stf.ui.FitnessScreen;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -9,12 +12,14 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
-public class ShitToFitClient implements ClientModInitializer {
+public class SweatToFitClientMod implements ClientModInitializer {
         private static KeyBinding fitnessMenuKey;
 
         @Override
         public void onInitializeClient() {
-                ShitToFit.LOGGER.info("Client initialization for {}!", ShitToFit.MOD_ID);
+                SweatToFitMod.LOGGER.info("Client initialization for {}!", SweatToFitMod.MOD_ID);
+
+                AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
 
                 ClientNetworkHelper.registerClientPackets();
 

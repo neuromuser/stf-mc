@@ -1,4 +1,4 @@
-package com.neuromuser.shittofit.mixin;
+package com.neuromuser.stf.mixin;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;

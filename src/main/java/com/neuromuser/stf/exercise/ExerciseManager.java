@@ -1,61 +1,24 @@
-package com.neuromuser.shittofit.exercise;
+package com.neuromuser.stf.exercise;
 
-import com.neuromuser.shittofit.PlayerStatManager;
-import com.neuromuser.shittofit.components.ModComponents;
-import com.neuromuser.shittofit.components.PlayerDataComponent;
+import com.neuromuser.stf.PlayerStatManager;
+import com.neuromuser.stf.components.ModComponents;
+import com.neuromuser.stf.components.PlayerDataComponent;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 
+import java.util.Map;
+
 public class ExerciseManager {
 
-    public static void completeExercise(ServerPlayerEntity player, ExerciseType type) {
+    public static void completeExercise(ServerPlayerEntity player, int baseXp, Map<StatType, Integer> expMap) {
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
-        switch (type) {
-            case PULLUPS -> {
-                data.addStatExperience(StatType.DAMAGE, 20);
-                data.addStatExperience(StatType.MINING_SPEED, 15);
-                data.addStatExperience(StatType.TIEREDZ, 10);
-            }
-            case PUSHUPS -> {
-                data.addStatExperience(StatType.DAMAGE, 15);
-                data.addStatExperience(StatType.ATTACK_SPEED, 10);
-                data.addStatExperience(StatType.TIEREDZ, 10);
-            }
-            case BURPIES -> {
-                data.addStatExperience(StatType.EXHAUSTION, 15);
-                data.addStatExperience(StatType.MINING_SPEED, 20);
-                data.addStatExperience(StatType.RANGED_TIME, 40);
-            }
-            case SQUATS -> {
-                data.addStatExperience(StatType.MAX_HEALTH, 15);
-                data.addStatExperience(StatType.SPEED, 10);
-                data.addStatExperience(StatType.CRAFTING_TIME, 20);
-            }
-            case PRESS -> {
-                data.addStatExperience(StatType.MAX_HEALTH, 5);
-                data.addStatExperience(StatType.DAMAGE, 15);
-                data.addStatExperience(StatType.EXHAUSTION, 15);
-            }
-            case DUMBBELLS -> {
-                data.addStatExperience(StatType.ATTACK_SPEED, 15);
-                data.addStatExperience(StatType.MINING_SPEED, 15);
-                data.addStatExperience(StatType.CRAFTING_TIME, 10);
-            }
-            case PLANK -> {
-                data.addStatExperience(StatType.EXHAUSTION, 40);
-                data.addStatExperience(StatType.BREATH, 40);
-            }
-            case RUN_WALK -> {
-                data.addStatExperience(StatType.SPEED, 100);
-                data.addStatExperience(StatType.BREATH, 60);
-                data.addStatExperience(StatType.TIEREDZ, 40);
-                data.addExperiencePoints(90);
+        for (Map.Entry<StatType, Integer> entry : expMap.entrySet()) {
+            if (entry.getValue() > 0) {
+                data.addStatExperience(entry.getKey(), entry.getValue());
             }
         }
-
-        data.addExperiencePoints(10);
-
+        data.addExperiencePoints(baseXp);
         player.getWorld().playSound(null, player.getBlockPos(),
                 SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5f, 1.5f);
     }
