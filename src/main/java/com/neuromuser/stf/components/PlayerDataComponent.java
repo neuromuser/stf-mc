@@ -1,7 +1,9 @@
 package com.neuromuser.stf.components;
 
+import com.neuromuser.stf.config.CommonConfig;
 import com.neuromuser.stf.exercise.ExerciseManager;
 import dev.onyxstudios.cca.api.v3.component.Component;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.nbt.NbtCompound;
 
 import static java.lang.Math.floor;
@@ -9,16 +11,16 @@ import static java.lang.Math.floor;
 public class PlayerDataComponent implements Component {
     private boolean initialized = false;
 
-    private float maxHealth = 1.0f; 
-    private float exhaustionModifier = 5.0f; 
-    private float miningSpeedModifier = 0.2f; 
-    private float craftingTimeModifier = 4.0f; 
-    private float speedModifier = 0.5f; 
-    private float breathModifier = 3.0f; 
-    private float damageModifier = 0.5f; 
-    private float attackSpeedModifier = 0.4f; 
-    private float rangedTimeModifier = 0.2f; 
-    private float tieredzModifier = 0.2f; 
+    private float maxHealth = 0.0f;
+    private float exhaustionModifier = 5.0f;
+    private float miningSpeedModifier = 0.2f;
+    private float craftingTimeModifier = 4.0f;
+    private float speedModifier = 0.5f;
+    private float breathModifier = 3.0f;
+    private float damageModifier = 0.5f;
+    private float attackSpeedModifier = 0.4f;
+    private float rangedTimeModifier = 0.2f;
+    private float tieredzModifier = 0.2f;
 
     private int experiencePoints = 0;
     private int availableLevelPoints = 0;
@@ -47,7 +49,6 @@ public class PlayerDataComponent implements Component {
     private int tieredzExp = 0;
 
     private static final int BASE_EXP_REQUIREMENT = 100;
-    private static final int MAX_STAT_LEVEL = 100;
 
     @Override
     public void readFromNbt(NbtCompound tag) {
@@ -185,61 +186,71 @@ public class PlayerDataComponent implements Component {
 
     public int getMaxHealthLevel() { return maxHealthLevel; }
     public void setMaxHealthLevel(int value) {
-        maxHealthLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        maxHealthLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.MAX_HEALTH);
     }
 
     public int getExhaustionLevel() { return exhaustionLevel; }
     public void setExhaustionLevel(int value) {
-        exhaustionLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        exhaustionLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.EXHAUSTION);
     }
 
     public int getMiningSpeedLevel() { return miningSpeedLevel; }
     public void setMiningSpeedLevel(int value) {
-        miningSpeedLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        miningSpeedLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.MINING_SPEED);
     }
 
     public int getCraftingTimeLevel() { return craftingTimeLevel; }
     public void setCraftingTimeLevel(int value) {
-        craftingTimeLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        craftingTimeLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.CRAFTING_TIME);
     }
 
     public int getSpeedLevel() { return speedLevel; }
     public void setSpeedLevel(int value) {
-        speedLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        speedLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.SPEED);
     }
 
     public int getBreathLevel() { return breathLevel; }
     public void setBreathLevel(int value) {
-        breathLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        breathLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.BREATH);
     }
 
     public int getDamageLevel() { return damageLevel; }
     public void setDamageLevel(int value) {
-        damageLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        damageLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.DAMAGE);
     }
 
     public int getAttackSpeedLevel() { return attackSpeedLevel; }
     public void setAttackSpeedLevel(int value) {
-        attackSpeedLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        attackSpeedLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.ATTACK_SPEED);
     }
 
     public int getRangedTimeLevel() { return rangedTimeLevel; }
     public void setRangedTimeLevel(int value) {
-        rangedTimeLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        rangedTimeLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.RANGED_TIME);
     }
 
     public int getTieredzLevel() { return tieredzLevel; }
     public void setTieredzLevel(int value) {
-        tieredzLevel = Math.min(value, MAX_STAT_LEVEL);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        tieredzLevel = Math.min(value, config.maxStatLevel);
         updateStatModifier(ExerciseManager.StatType.TIEREDZ);
     }
 
@@ -361,13 +372,14 @@ public class PlayerDataComponent implements Component {
     }
 
     public boolean isStatAtMaxLevel(ExerciseManager.StatType stat) {
-        return getStatLevel(stat) >= MAX_STAT_LEVEL;
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        return getStatLevel(stat) >= config.maxStatLevel;
     }
 
 
     private void checkOverallLevelUp() {
         int oldLevel = overallLevel;
-        int newLevel = 1 + (experiencePoints / 100); 
+        int newLevel = 1 + (experiencePoints / 100);
 
         if (newLevel > oldLevel) {
             int levelsGained = newLevel - oldLevel;
@@ -377,13 +389,14 @@ public class PlayerDataComponent implements Component {
     }
 
     private void checkStatLevelUp(ExerciseManager.StatType stat) {
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
         int currentLevel = getStatLevel(stat);
-        if (currentLevel >= MAX_STAT_LEVEL) return;
+        if (currentLevel >= config.maxStatLevel) return;
 
         int currentExp = getStatExperience(stat);
         int requiredExp = getExpRequiredForStatLevel(stat);
 
-        while (currentExp >= requiredExp && currentLevel < MAX_STAT_LEVEL) {
+        while (currentExp >= requiredExp && currentLevel < config.maxStatLevel) {
             currentExp -= requiredExp;
             currentLevel++;
 
@@ -419,14 +432,14 @@ public class PlayerDataComponent implements Component {
 
     private void updateStatModifier(ExerciseManager.StatType stat) {
         int level = getStatLevel(stat);
-
-        float GLOBAL_MULTIPLIER = 2.0f;
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        float GLOBAL_MULTIPLIER = 2.0f * config.statIncreaseMultiplier;
         switch (stat) {
-            case MAX_HEALTH -> maxHealth = (float) (1.0f + floor(level * 0.19f * GLOBAL_MULTIPLIER));
+            case MAX_HEALTH -> maxHealth = (float) (0.0f + floor(level * 0.19f * GLOBAL_MULTIPLIER));
             case EXHAUSTION -> exhaustionModifier = Math.max(0.2f, 5.0f - (level * 0.04f * GLOBAL_MULTIPLIER));
             case MINING_SPEED -> miningSpeedModifier = 0.2f + (level * 0.008f * GLOBAL_MULTIPLIER);
             case CRAFTING_TIME -> craftingTimeModifier = Math.max(0.2f, 4.0f - (level * 0.03f * GLOBAL_MULTIPLIER));
-            case SPEED -> speedModifier = 0.5f + (level * 0.005f * GLOBAL_MULTIPLIER);
+            case SPEED -> speedModifier = Math.min(1.5f, 0.5f + (level * 0.005f * GLOBAL_MULTIPLIER));
             case BREATH -> breathModifier = Math.max(0.5f, 3.0f - (level * 0.02f * GLOBAL_MULTIPLIER));
             case DAMAGE -> damageModifier = 0.5f + (level * 0.005f * GLOBAL_MULTIPLIER);
             case ATTACK_SPEED -> attackSpeedModifier = 0.4f + (level * 0.006f * GLOBAL_MULTIPLIER);

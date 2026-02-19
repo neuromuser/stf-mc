@@ -2,7 +2,8 @@ package com.neuromuser.stf.ui;
 
 import com.neuromuser.stf.components.ModComponents;
 import com.neuromuser.stf.components.PlayerDataComponent;
-import com.neuromuser.stf.config.ModConfig;
+import com.neuromuser.stf.config.ClientConfig;
+import com.neuromuser.stf.config.CommonConfig;
 import com.neuromuser.stf.exercise.ExerciseManager;
 import com.neuromuser.stf.network.ClientNetworkHelper;
 import io.wispforest.owo.ui.base.BaseOwoScreen;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
     private final Map<ExerciseManager.StatType, LabelComponent> statLabels = new HashMap<>();
@@ -45,7 +47,8 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
                 .horizontalAlignment(HorizontalAlignment.CENTER)
                 .verticalAlignment(VerticalAlignment.CENTER);
 
-        ModConfig config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
+        ClientConfig clientConfig = AutoConfig.getConfigHolder(ClientConfig.class).getConfig();
+        CommonConfig commonConfig = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
 
         FlowLayout mainPanel = Containers.verticalFlow(Sizing.content(), Sizing.content());
         mainPanel.surface(Surface.DARK_PANEL).padding(Insets.of(15));
@@ -71,16 +74,14 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
         mainPanel.child(topInfo);
 
         FlowLayout contentArea = Containers.horizontalFlow(Sizing.content(), Sizing.content()).gap(10);
-
         FlowLayout leftPanel = Containers.verticalFlow(Sizing.content(), Sizing.content()).gap(10);
 
         FlowLayout exercisesPanel = Containers.verticalFlow(Sizing.content(), Sizing.content());
         exercisesPanel.surface(Surface.DARK_PANEL).padding(Insets.of(8));
         exercisesPanel.child(Components.label(Text.translatable("screen.stf.fitness.exercises")));
 
-
-        for (int i = 0; i < ModConfig.MAX_EXERCISES; i++) {
-            ModConfig.ExerciseConfig exerciseConfig = config.getExercise(i);
+        for (int i = 0; i < ClientConfig.MAX_EXERCISES; i++) {
+            ClientConfig.ExerciseConfig exerciseConfig = clientConfig.getExercise(i);
             if (exerciseConfig == null || !exerciseConfig.enabled) continue;
 
             final int index = i;
@@ -91,7 +92,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
             for (ExerciseManager.StatType stat : ExerciseManager.StatType.values()) {
                 int gain = exerciseConfig.getExpForStat(stat);
                 if (gain > 0) {
-                    int actual = Math.round(gain * config.globalExpMultiplier);
+                    int actual = Math.round(gain * commonConfig.globalExpMultiplier);
                     tooltip.append(Text.translatable(getStatTranslationKey(stat))).append(Text.literal(": +" + actual + " XP\n"));
                 }
             }
@@ -162,7 +163,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
             }
         }
 
-        if (lastExerciseHover != currentHoveredIndex || lastUpgradeHover != currentHoveredUpgrade) {
+        if (!Objects.equals(lastExerciseHover, currentHoveredIndex) || lastUpgradeHover != currentHoveredUpgrade) {
             updateUI();
         }
     }
@@ -182,10 +183,11 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
             if (currentHoveredUpgrade == stat && data.getAvailableLevelPoints() > 0 && !data.isStatAtMaxLevel(stat)) {
                 expGain = 100;
             } else if (currentHoveredIndex != null) {
-                ModConfig config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
-                ModConfig.ExerciseConfig exerciseConfig = config.getExercise(currentHoveredIndex);
+                ClientConfig clientConfig = AutoConfig.getConfigHolder(ClientConfig.class).getConfig();
+                CommonConfig commonConfig = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+                ClientConfig.ExerciseConfig exerciseConfig = clientConfig.getExercise(currentHoveredIndex);
                 if (exerciseConfig != null) {
-                    expGain = Math.round(exerciseConfig.getExpForStat(stat) * config.globalExpMultiplier);
+                    expGain = Math.round(exerciseConfig.getExpForStat(stat) * commonConfig.globalExpMultiplier);
                 }
             }
 
@@ -232,11 +234,10 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
             float progress = data.getStatProgress(stat);
 
             statLabels.get(stat).text(Text.literal("Lv " + level));
-
             statBars.get(stat).tooltip(Text.literal((int)(progress * max) + " / " + max + " XP"));
 
             FlowLayout bar = statBars.get(stat);
-            ((FlowLayout) bar.children().get(0)).horizontalSizing(Sizing.fill((int)(progress * 100)));
+            bar.children().get(0).horizontalSizing(Sizing.fill((int)(progress * 100)));
 
             upgradeButtons.get(stat).active(data.getAvailableLevelPoints() > 0 && !data.isStatAtMaxLevel(stat));
         }

@@ -3,6 +3,8 @@ package com.neuromuser.stf.exercise;
 import com.neuromuser.stf.PlayerStatManager;
 import com.neuromuser.stf.components.ModComponents;
 import com.neuromuser.stf.components.PlayerDataComponent;
+import com.neuromuser.stf.config.CommonConfig;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -12,13 +14,16 @@ import java.util.Map;
 public class ExerciseManager {
 
     public static void completeExercise(ServerPlayerEntity player, int baseXp, Map<StatType, Integer> expMap) {
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        float multiplier = config.globalExpMultiplier;
+
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
         for (Map.Entry<StatType, Integer> entry : expMap.entrySet()) {
             if (entry.getValue() > 0) {
-                data.addStatExperience(entry.getKey(), entry.getValue());
+                data.addStatExperience(entry.getKey(), Math.round(entry.getValue() * multiplier));
             }
         }
-        data.addExperiencePoints(baseXp);
+        data.addExperiencePoints(Math.round(baseXp * multiplier));
         player.getWorld().playSound(null, player.getBlockPos(),
                 SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5f, 1.5f);
     }
@@ -27,11 +32,12 @@ public class ExerciseManager {
         if (statType == null) return;
 
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
 
         if (data.getAvailableLevelPoints() <= 0) return;
+        if (data.getStatLevel(statType) >= config.maxStatLevel) return;
 
         data.addStatExperience(statType, 100);
-
         data.setAvailableLevelPoints(data.getAvailableLevelPoints() - 1);
 
         switch (statType) {
@@ -49,6 +55,12 @@ public class ExerciseManager {
 
         player.getWorld().playSound(null, player.getBlockPos(),
                 SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 0.7f, 1.2f);
+    }
+
+    public static boolean isStatAtMaxLevel(ServerPlayerEntity player, StatType statType) {
+        CommonConfig config = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+        PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
+        return data.getStatLevel(statType) >= config.maxStatLevel;
     }
 
     public enum StatType {

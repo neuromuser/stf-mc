@@ -1,6 +1,6 @@
 package com.neuromuser.stf;
 
-import com.neuromuser.stf.config.ModConfig;
+import com.neuromuser.stf.config.ClientConfig;
 import com.neuromuser.stf.network.ClientNetworkHelper;
 import com.neuromuser.stf.ui.FitnessScreen;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -19,7 +19,7 @@ public class SweatToFitClientMod implements ClientModInitializer {
         public void onInitializeClient() {
                 SweatToFitMod.LOGGER.info("Client initialization for {}!", SweatToFitMod.MOD_ID);
 
-                AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
+                AutoConfig.register(ClientConfig.class, GsonConfigSerializer::new);
 
                 ClientNetworkHelper.registerClientPackets();
 

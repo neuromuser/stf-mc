@@ -55,37 +55,14 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             args.set(0, originalExhaustion * modifier);
         }
     }
-    @Inject(method = "getBlockBreakingSpeed", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
     private void modifyMiningSpeed(BlockState block, CallbackInfoReturnable<Float> cir) {
+        float originalSpeed = cir.getReturnValue();
+
         PlayerEntity player = (PlayerEntity) (Object) this;
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
 
-        float baseSpeed = player.getInventory().getBlockBreakingSpeed(block);
-
-        if (this.hasStatusEffect(StatusEffects.HASTE)) {
-            baseSpeed *= 1.0F + (float)(Objects.requireNonNull(this.getStatusEffect(StatusEffects.HASTE)).getAmplifier() + 1) * 0.2F;
-        }
-
-        if (this.hasStatusEffect(StatusEffects.MINING_FATIGUE)) {
-            float fatigue;
-            switch (Objects.requireNonNull(this.getStatusEffect(StatusEffects.MINING_FATIGUE)).getAmplifier()) {
-                case 0 -> fatigue = 0.3F;
-                case 1 -> fatigue = 0.09F;
-                case 2 -> fatigue = 0.027F;
-                default -> fatigue = 8.1E-4F;
-            }
-            baseSpeed *= fatigue;
-        }
-
-        ItemStack heldItem = player.getMainHandStack();
-        if (!heldItem.isEmpty()) {
-            int efficiencyLevel = EnchantmentHelper.getLevel(Enchantments.EFFICIENCY, heldItem);
-            if (efficiencyLevel > 0 && heldItem.isSuitableFor(block)) {
-                baseSpeed += (float)(efficiencyLevel * efficiencyLevel + 1);
-            }
-        }
-
-        float finalSpeed = baseSpeed * data.getMiningSpeedModifier();
+        float finalSpeed = originalSpeed * data.getMiningSpeedModifier();
 
         cir.setReturnValue(finalSpeed);
 

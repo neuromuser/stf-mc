@@ -2,13 +2,13 @@ package com.neuromuser.stf.network;
 
 import com.neuromuser.stf.components.ModComponents;
 import com.neuromuser.stf.components.PlayerDataComponent;
-import com.neuromuser.stf.config.ModConfig;
+import com.neuromuser.stf.config.ClientConfig;
+import com.neuromuser.stf.config.CommonConfig;
 import com.neuromuser.stf.exercise.ExerciseManager;
 import com.neuromuser.stf.ui.FitnessScreen;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 
 import java.util.Map;
@@ -38,9 +38,8 @@ public class ClientNetworkHelper {
 
                     ExerciseManager.StatType[] stats = ExerciseManager.StatType.values();
                     for (int i = 0; i < stats.length; i++) {
-                        ExerciseManager.StatType stat = stats[i];
-                        setStatLevel(data, stat, statLevels[i]);
-                        setStatExp(data, stat, statExps[i]);
+                        setStatLevel(data, stats[i], statLevels[i]);
+                        setStatExp(data, stats[i], statExps[i]);
                     }
 
                     if (client.currentScreen instanceof FitnessScreen screen) {
@@ -82,11 +81,13 @@ public class ClientNetworkHelper {
     }
 
     public static void sendCompleteExercise(int exerciseIndex) {
-        ModConfig config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
-        ModConfig.ExerciseConfig exerciseConfig = config.getExercise(exerciseIndex);
+        ClientConfig clientConfig = AutoConfig.getConfigHolder(ClientConfig.class).getConfig();
+        CommonConfig commonConfig = AutoConfig.getConfigHolder(CommonConfig.class).getConfig();
+
+        ClientConfig.ExerciseConfig exerciseConfig = clientConfig.getExercise(exerciseIndex);
         if (exerciseConfig == null || !exerciseConfig.enabled) return;
 
-        float multiplier = config.globalExpMultiplier;
+        float multiplier = commonConfig.globalExpMultiplier;
         Map<ExerciseManager.StatType, Integer> expMap = exerciseConfig.getExpMap();
 
         PacketByteBuf buf = PacketByteBufs.create();

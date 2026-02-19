@@ -8,13 +8,9 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import java.util.EnumMap;
 import java.util.Map;
 
-@Config(name = "stf")
-public class ModConfig implements ConfigData {
+@Config(name = "stf_client")
+public class ClientConfig implements ConfigData {
 
-    @ConfigEntry.Gui.Tooltip
-    public float globalExpMultiplier = 1.0f;
-
-    // Inside ModConfig class
     @ConfigEntry.Gui.CollapsibleObject
     public ExerciseConfig exercise1 = new ExerciseConfig("exercise.stf.pullups", true, 0, 0, 15, 0, 0, 0, 20, 0, 0, 10, 0);
 
@@ -43,13 +39,10 @@ public class ModConfig implements ConfigData {
     public ExerciseConfig exercise9 = new ExerciseConfig("Custom Exercise 1", false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     @ConfigEntry.Gui.CollapsibleObject
-    public ExerciseConfig exercise10 = new ExerciseConfig("Custom Exercise 1", false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    public ExerciseConfig exercise10 = new ExerciseConfig("Custom Exercise 2", false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-    @Override
-    public void validatePostLoad() {
-        if (globalExpMultiplier < 0.1f) globalExpMultiplier = 0.1f;
-        if (globalExpMultiplier > 10.0f) globalExpMultiplier = 10.0f;
-    }
+    @ConfigEntry.Gui.Excluded
+    public static final int MAX_EXERCISES = 10;
 
     public ExerciseConfig getExercise(int index) {
         return switch (index) {
@@ -66,8 +59,6 @@ public class ModConfig implements ConfigData {
             default -> null;
         };
     }
-    @ConfigEntry.Gui.Excluded
-    public static final int MAX_EXERCISES = 10;
 
     public static class ExerciseConfig implements ConfigData {
 
