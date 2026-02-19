@@ -55,17 +55,16 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             args.set(0, originalExhaustion * modifier);
         }
     }
-    @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"), cancellable = true)
-    private void modifyMiningSpeed(BlockState block, CallbackInfoReturnable<Float> cir) {
-        float originalSpeed = cir.getReturnValue();
+    @ModifyVariable(method = "getBlockBreakingSpeed", at = @At("STORE"), ordinal = 0)
+    private float applyMiningModifier(float f) {
+        PlayerDataComponent data = ModComponents.PLAYER_DATA.get(this);
+        return f * data.getMiningSpeedModifier();
+    }
 
+    @Inject(method = "getBlockBreakingSpeed", at = @At("RETURN"))
+    private void applyExhaustion(BlockState block, CallbackInfoReturnable<Float> cir) {
         PlayerEntity player = (PlayerEntity) (Object) this;
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
-
-        float finalSpeed = originalSpeed * data.getMiningSpeedModifier();
-
-        cir.setReturnValue(finalSpeed);
-
         if (!player.getWorld().isClient) {
             player.addExhaustion(0.002F * data.getExhaustionModifier());
         }
@@ -82,18 +81,23 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method = "tick", at = @At("TAIL"))
     private void fasterBreathLoss(CallbackInfo ci) {
         if (!this.getWorld().isClient && this.isSubmergedInWater) {
+
+            if (this.hasStatusEffect(StatusEffects.WATER_BREATHING)) {
+                return;
+            }
+
             PlayerEntity player = (PlayerEntity) (Object) this;
             PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
             float breathModifier = data.getBreathModifier();
 
             int currentAir = this.getAir();
-            if (currentAir > 0) {
-                int additionalDrain = (int)(breathModifier - 1.0f);
+
+            if (currentAir > 0 && breathModifier > 1.0f) {
+                int additionalDrain = Math.round(breathModifier - 1.0f);
                 this.setAir(currentAir - additionalDrain);
             }
         }
     }
-
     @ModifyArg(
             method = "attack(Lnet/minecraft/entity/Entity;)V",
             at = @At(
