@@ -18,14 +18,37 @@ public class ExerciseManager {
         float multiplier = config.globalExpMultiplier;
 
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
+
         for (Map.Entry<StatType, Integer> entry : expMap.entrySet()) {
             if (entry.getValue() > 0) {
+                int levelBefore = data.getStatLevel(entry.getKey());
+
                 data.addStatExperience(entry.getKey(), Math.round(entry.getValue() * multiplier));
+
+                if (data.getStatLevel(entry.getKey()) > levelBefore) {
+                    applyStatModifier(player, entry.getKey(), data);
+                }
             }
         }
+
         data.addExperiencePoints(Math.round(baseXp * multiplier));
         player.getWorld().playSound(null, player.getBlockPos(),
                 SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5f, 1.5f);
+    }
+
+    private static void applyStatModifier(ServerPlayerEntity player, StatType statType, PlayerDataComponent data) {
+        switch (statType) {
+            case MAX_HEALTH -> PlayerStatManager.setPlayerMaxHealth(player, data.getMaxHealth());
+            case EXHAUSTION -> PlayerStatManager.setPlayerExhaustionModifier(player, data.getExhaustionModifier());
+            case MINING_SPEED -> PlayerStatManager.setPlayerMiningSpeedModifier(player, data.getMiningSpeedModifier());
+            case CRAFTING_TIME -> PlayerStatManager.setPlayerCraftingTimeModifier(player, data.getCraftingTimeModifier());
+            case SPEED -> PlayerStatManager.setPlayerSpeedModifier(player, data.getSpeedModifier());
+            case BREATH -> PlayerStatManager.setPlayerBreathModifier(player, data.getBreathModifier());
+            case DAMAGE -> PlayerStatManager.setPlayerDamageModifier(player, data.getDamageModifier());
+            case ATTACK_SPEED -> PlayerStatManager.setPlayerAttackSpeedModifier(player, data.getAttackSpeedModifier());
+            case RANGED_TIME -> PlayerStatManager.setPlayerRangedTimeModifier(player, data.getRangedTimeModifier());
+            case TIEREDZ -> PlayerStatManager.setPlayerTieredzModifier(player, data.getTieredzModifier());
+        }
     }
 
     public static void upgradeStat(ServerPlayerEntity player, StatType statType) {

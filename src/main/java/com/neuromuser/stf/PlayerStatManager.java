@@ -71,6 +71,23 @@ public class PlayerStatManager {
     public static void setPlayerAttackSpeedModifier(ServerPlayerEntity player, float modifier) {
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
         data.setAttackSpeedModifier(modifier);
+
+        EntityAttributeInstance attribute = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+        if (attribute != null) {
+            UUID modifierUuid = ModConstants.ATTACK_SPEED_MODIFIER_UUID;
+
+            attribute.removeModifier(modifierUuid);
+
+            if (modifier != 1.0f) {
+                EntityAttributeModifier attributeModifier = new EntityAttributeModifier(
+                        modifierUuid,
+                        SweatToFitMod.MOD_ID + ":attack_speed",
+                        modifier - 1.0,
+                        EntityAttributeModifier.Operation.MULTIPLY_TOTAL
+                );
+                attribute.addPersistentModifier(attributeModifier);
+            }
+        }
     }
 
     public static void setPlayerRangedTimeModifier(ServerPlayerEntity player, float modifier) {

@@ -112,13 +112,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         return damage * data.getDamageModifier();
     }
 
-    @Inject(method = "getAttackCooldownProgressPerTick", at = @At("RETURN"), cancellable = true)
-    private void modifyAttackCooldown(CallbackInfoReturnable<Float> cir){
-        float baseSpeed = cir.getReturnValue();
-        PlayerEntity player = (PlayerEntity) (Object) this;
-        PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
-        cir.setReturnValue(baseSpeed / data.getAttackSpeedModifier());
-    }
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void modifyBowDrawTime(CallbackInfo ci) {
