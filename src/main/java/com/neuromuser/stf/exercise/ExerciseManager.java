@@ -18,6 +18,8 @@ public class ExerciseManager {
         float multiplier = config.globalExpMultiplier;
 
         PlayerDataComponent data = ModComponents.PLAYER_DATA.get(player);
+        player.getWorld().playSound(null, player.getBlockPos(),
+                SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5f, 1.5f);
 
         for (Map.Entry<StatType, Integer> entry : expMap.entrySet()) {
             if (entry.getValue() > 0) {
@@ -32,8 +34,7 @@ public class ExerciseManager {
         }
 
         data.addExperiencePoints(Math.round(baseXp * multiplier));
-        player.getWorld().playSound(null, player.getBlockPos(),
-                SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5f, 1.5f);
+
     }
 
     private static void applyStatModifier(ServerPlayerEntity player, StatType statType, PlayerDataComponent data) {

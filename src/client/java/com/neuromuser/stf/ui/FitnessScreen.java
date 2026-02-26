@@ -192,7 +192,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
             }
 
             if (expGain > 0) {
-                int max = 100 + (data.getStatLevel(stat) * 2);
+                int max = data.getExpRequiredForStatLevel(stat);
                 float progress = data.getStatProgress(stat);
 
                 int currentWidth = (int) (progress * component.width());
@@ -230,7 +230,7 @@ public class FitnessScreen extends BaseOwoScreen<FlowLayout> {
 
         for (ExerciseManager.StatType stat : ExerciseManager.StatType.values()) {
             int level = data.getStatLevel(stat);
-            int max = 100 + (level * 2);
+            int max = 150 - level;
             float progress = data.getStatProgress(stat);
 
             statLabels.get(stat).text(Text.literal("Lv " + level));

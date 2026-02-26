@@ -48,7 +48,7 @@ public class PlayerDataComponent implements Component {
     private int rangedTimeExp = 0;
     private int tieredzExp = 0;
 
-    private static final int BASE_EXP_REQUIREMENT = 100;
+    private static final int BASE_EXP_REQUIREMENT = 150;
 
     @Override
     public void readFromNbt(NbtCompound tag) {
@@ -362,7 +362,7 @@ public class PlayerDataComponent implements Component {
 
     public int getExpRequiredForStatLevel(ExerciseManager.StatType stat) {
         int level = getStatLevel(stat);
-        return BASE_EXP_REQUIREMENT + (level * 2);
+        return Math.max(50, BASE_EXP_REQUIREMENT - level);
     }
 
     public float getStatProgress(ExerciseManager.StatType stat) {
